@@ -1,0 +1,11 @@
+always Always start component names with a capital letter for example <Welcome />
+
+if you integrate React into an existing app, you might start bottom-up with a small component like Button and gradually work your way to the top of the view hierarchy.
+
+A good rule of thumb is that if a part of your UI is used several times (Button, Panel, Avatar), or is complex enough on its own (App, FeedStory, Comment), it is a good candidate to be a reusable component.
+
+If you don't use something in render(), it shouldn't be in the state: this.timerID = ...
+
+React events are named using camelCase, rather than lowercase
+
+if you refer to a method without () after it, such as <button onClick={this.handleClick}>, you should bind that method otherwise 'this' will be undefined when the function is actually called e.g. https://facebook.github.io/react/docs/handling-events.html

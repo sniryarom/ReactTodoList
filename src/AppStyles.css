@@ -1,0 +1,27 @@
+const checkboxHideStyle = {
+  display: 'none'
+};
+
+const inputBtnStyle = {
+  marginRight: '20px'
+};
+
+const checkboxShowStyle = {
+  display: 'block'
+};
+
+const todoListTypeStyle = {
+  listStyleType: 'none'
+};
+
+const spanTextStrikeThroughStyle = {
+  textDecoration: 'line-through'
+};
+
+const spanTextRegularStyle = {
+  textDecoration: 'none'
+};
+
+const deleteBtnStyle = {
+  margin: '30px'
+}
