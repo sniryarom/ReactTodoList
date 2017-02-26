@@ -38,6 +38,7 @@ const deleteBtnStyle = {
      this.state = {text: '', textList: []}
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
+     this.removeItem = this.removeItem.bind(this)
    }
    update(e){
       this.setState({text: e.target.value})
@@ -47,8 +48,7 @@ const deleteBtnStyle = {
     if (this.state.text !== '') {
       var newArray = this.state.textList.slice();    
       newArray.push({text: this.state.text});   
-      this.setState({textList: newArray})
-      this.setState({text: ''})
+      this.setState({textList: newArray, text: ''})
     }
     
   }
@@ -58,6 +58,15 @@ const deleteBtnStyle = {
    this.addItem();  
   }
 }
+
+removeItem(e) {
+    
+    var array = this.state.textList;
+    var index = array.indexOf(e.target.value)
+    console.log('remove item clicked for index: ' + index)
+    array.splice(index, 1);
+    this.setState({textList: array });
+  }
 
   // shouldComponentUpdate() {
   //    return this.state.toAdd;
@@ -72,7 +81,7 @@ const deleteBtnStyle = {
           <hr/>
           <div>
             <h1>ToDo List</h1>
-            <TodoList list={this.state.textList} />
+            <TodoList list={this.state.textList} removeItem={this.removeItem} />
           </div>
        </div>
      )
@@ -87,17 +96,17 @@ const deleteBtnStyle = {
  class TodoList extends React.Component {
 
   constructor(props){
-     super(props);
-    this.removeItem = this.removeItem.bind(this)
+    super(props);
+    //this.removeItem = this.removeItem.bind(this)
   }
 
-  removeItem(e) {
-    console.log('remove item clicked')
-    var array = this.state.list;
-    var index = array.indexOf(e.target.value)
-    array.splice(index, 1);
-    this.setState({list: array });
-  }
+  // removeItem(e) {
+  //   console.log('remove item clicked')
+  //   var array = this.state.list;
+  //   var index = array.indexOf(e.target.value)
+  //   array.splice(index, 1);
+  //   this.setState({list: array });
+  // }
 
   //  componentWillReceiveProps(){
   //    console.log('TodoItem componentWillReceiveProps');
@@ -114,7 +123,7 @@ const deleteBtnStyle = {
         <ul id="todoList" style={todoListTypeStyle}>
         {
             this.props.list.map((item, index) => (
-                <TodoItem key={index} text={item.text} removeItemFunc={this.removeItem}/>
+                <TodoItem key={index} text={item.text} removeItemFunc={this.props.removeItem}/>
             ))
         }    
         </ul>
@@ -130,8 +139,8 @@ class TodoItem extends React.Component {
    // componentWillMount(){
    //  console.log('TodoItem componentWillMount');
    // }
-   constructor(){
-     super();
+   constructor(props){
+     super(props);
      this.state = {style: spanTextRegularStyle}
      this.checkItem = this.checkItem.bind(this)
    }
