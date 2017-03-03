@@ -38,7 +38,7 @@ const deleteBtnStyle = {
      this.state = {text: '', textList: []}
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
-     this.removeItem = this.removeItem.bind(this)
+     //this.removeItem = this.removeItem.bind(this)
    }
    update(e){
       this.setState({text: e.target.value})
@@ -60,13 +60,31 @@ const deleteBtnStyle = {
 }
 
 removeItem(e) {
-    
     var array = this.state.textList;
+    console.debug('e.target.value: ' + e.target.value)
     var index = array.indexOf(e.target.value)
+    // index = 1
+    console.debug('array: ' + array)
+    console.debug('index: ' + index)
     console.log('remove item clicked for index: ' + index)
     array.splice(index, 1);
-    this.setState({textList: array });
+    console.debug('array: ' + array)
+    //this.setState({textList: array });
   }
+
+// removeItem(index) {
+//     // var array = this.state.textList;
+//     // var index = array.indexOf(e.target.value)
+//     // index = 1
+//     console.log('remove item clicked for index: ' + index)
+//     // array.splice(index, 1);
+//     // this.setState({textList: array });
+//     this.setState({
+//         textList: this.state.textList.filter(function (e, i) {
+//         return i !== index;
+//       })
+//     });
+//   }
 
   // shouldComponentUpdate() {
   //    return this.state.toAdd;
@@ -81,7 +99,7 @@ removeItem(e) {
           <hr/>
           <div>
             <h1>ToDo List</h1>
-            <TodoList list={this.state.textList} removeItem={this.removeItem} />
+            <TodoList list={this.state.textList} removeItemFunc={this.removeItem.bind(this)} />
           </div>
        </div>
      )
@@ -98,6 +116,8 @@ removeItem(e) {
   constructor(props){
     super(props);
     //this.removeItem = this.removeItem.bind(this)
+    this.state = {style: spanTextRegularStyle}
+    this.checkItem = this.checkItem.bind(this)
   }
 
   // removeItem(e) {
@@ -107,6 +127,17 @@ removeItem(e) {
   //   array.splice(index, 1);
   //   this.setState({list: array });
   // }
+  // removeItem(index) {
+  //   var array = this.state.textList;
+  //   //var index = array.indexOf(e.target.value)
+  //   // index = 1
+  //   console.debug('array: ' + array)
+  //   console.debug('index: ' + index)
+  //   console.log('remove item clicked for index: ' + index)
+  //   array.splice(index, 1);
+  //   console.debug('array: ' + array)
+  //   //this.setState({textList: array });
+  // }
 
   //  componentWillReceiveProps(){
   //    console.log('TodoItem componentWillReceiveProps');
@@ -114,6 +145,16 @@ removeItem(e) {
   //     newArray.push({text: this.props.text});   
   //     this.setState({list:newArray})
   // }
+
+  checkItem(e){
+      console.log('add item clicked')
+      if (e.target.checked) {
+        this.setState({style: spanTextStrikeThroughStyle})
+      }
+      else {
+       this.setState({style: spanTextRegularStyle}) 
+      }
+   }
 
   render(){
     console.log('TodoList render');
@@ -123,7 +164,7 @@ removeItem(e) {
         <ul id="todoList" style={todoListTypeStyle}>
         {
             this.props.list.map((item, index) => (
-                <TodoItem key={index} text={item.text} removeItemFunc={this.props.removeItem}/>
+                <TodoItem key={index} text={item.text} removeItemFunc={this.props.removeItemFunc}/>
             ))
         }    
         </ul>
