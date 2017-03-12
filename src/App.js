@@ -32,21 +32,37 @@ const deleteBtnStyle = {
 
 
 
- class App extends React.Component {
-  constructor(){
-     super();
+ class TodoApp extends React.Component {
+  constructor(props){
+     super(props);
      this.state = {text: '', textList: []}
+
+     //this.state = {text: ''}
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
-     //this.removeItem = this.removeItem.bind(this)
+     this.removeItem = this.removeItem.bind(this)
    }
+
+   componentWillMount() {
+      let newArray = this.getInitialData();
+      this.setState({textList: newArray})
+   }
+
+   getInitialData() {
+      let newArray = [];
+      this.props.data.map((item) => (  
+                newArray.push(item.text)
+            ))
+      return newArray;
+   }
+
    update(e){
       this.setState({text: e.target.value})
-      //this.setState({toRender: false})
    }
+
    addItem(){
     if (this.state.text !== '') {
-      var newArray = this.state.textList.slice();    
+      let newArray = this.state.textList.slice();    
       newArray.push({text: this.state.text});   
       this.setState({textList: newArray, text: ''})
     }
@@ -59,36 +75,12 @@ const deleteBtnStyle = {
   }
 }
 
-removeItem(e) {
-    var array = this.state.textList;
-    console.debug('e.target.value: ' + e.target.value)
-    var index = array.indexOf(e.target.value)
-    // index = 1
-    console.debug('array: ' + array)
-    console.debug('index: ' + index)
+removeItem(e, index) {
+    let array = this.state.textList;
     console.log('remove item clicked for index: ' + index)
     array.splice(index, 1);
-    console.debug('array: ' + array)
-    //this.setState({textList: array });
+    this.setState({textList: array});
   }
-
-// removeItem(index) {
-//     // var array = this.state.textList;
-//     // var index = array.indexOf(e.target.value)
-//     // index = 1
-//     console.log('remove item clicked for index: ' + index)
-//     // array.splice(index, 1);
-//     // this.setState({textList: array });
-//     this.setState({
-//         textList: this.state.textList.filter(function (e, i) {
-//         return i !== index;
-//       })
-//     });
-//   }
-
-  // shouldComponentUpdate() {
-  //    return this.state.toAdd;
-  //  }
   
   render(){
      console.log('App render');
@@ -99,7 +91,7 @@ removeItem(e) {
           <hr/>
           <div>
             <h1>ToDo List</h1>
-            <TodoList list={this.state.textList} removeItemFunc={this.removeItem.bind(this)} />
+            <TodoList list={this.state.textList} removeItemFunc={this.removeItem} />
           </div>
        </div>
      )
@@ -115,36 +107,14 @@ removeItem(e) {
 
   constructor(props){
     super(props);
-    //this.removeItem = this.removeItem.bind(this)
-    this.state = {style: spanTextRegularStyle}
-    this.checkItem = this.checkItem.bind(this)
+    this.state = {style: spanTextRegularStyle};
+    this.checkItem = this.checkItem.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
   }
 
-  // removeItem(e) {
-  //   console.log('remove item clicked')
-  //   var array = this.state.list;
-  //   var index = array.indexOf(e.target.value)
-  //   array.splice(index, 1);
-  //   this.setState({list: array });
-  // }
-  // removeItem(index) {
-  //   var array = this.state.textList;
-  //   //var index = array.indexOf(e.target.value)
-  //   // index = 1
-  //   console.debug('array: ' + array)
-  //   console.debug('index: ' + index)
-  //   console.log('remove item clicked for index: ' + index)
-  //   array.splice(index, 1);
-  //   console.debug('array: ' + array)
-  //   //this.setState({textList: array });
-  // }
-
-  //  componentWillReceiveProps(){
-  //    console.log('TodoItem componentWillReceiveProps');
-  //    var newArray = this.state.list.slice();    
-  //     newArray.push({text: this.props.text});   
-  //     this.setState({list:newArray})
-  // }
+  handleRemoveItem(e, index) {
+    this.props.removeItemFunc(e, index);
+  }
 
   checkItem(e){
       console.log('add item clicked')
@@ -163,8 +133,8 @@ removeItem(e) {
         
         <ul id="todoList" style={todoListTypeStyle}>
         {
-            this.props.list.map((item, index) => (
-                <TodoItem key={index} text={item.text} removeItemFunc={this.props.removeItemFunc}/>
+            this.props.list.map((item, index) => (  
+                <TodoItem key={index} index={index} text={item.text} removeItemFunc={this.handleRemoveItem}/>
             ))
         }    
         </ul>
@@ -177,24 +147,26 @@ removeItem(e) {
 
 
 class TodoItem extends React.Component {
-   // componentWillMount(){
-   //  console.log('TodoItem componentWillMount');
-   // }
    constructor(props){
      super(props);
-     this.state = {style: spanTextRegularStyle}
-     this.checkItem = this.checkItem.bind(this)
+     this.state = {style: spanTextRegularStyle};
+     this.checkItem = this.checkItem.bind(this);
+     this.handleRemoveItem = this.handleRemoveItem.bind(this);
    }
 
    checkItem(e){
-      console.log('add item clicked')
+      console.log('add item clicked');
       if (e.target.checked) {
-        this.setState({style: spanTextStrikeThroughStyle})
+        this.setState({style: spanTextStrikeThroughStyle});
       }
       else {
-       this.setState({style: spanTextRegularStyle}) 
+       this.setState({style: spanTextRegularStyle});
       }
    }
+
+   handleRemoveItem(e) {
+    this.props.removeItemFunc(e, this.props.index);
+  }
 
    render(){
     console.log('TodoItem render');
@@ -202,7 +174,7 @@ class TodoItem extends React.Component {
        <li>
             <input type="checkbox" onClick={this.checkItem} />
             <span style={this.state.style}>{this.props.text}</span>
-            <a href='' style={deleteBtnStyle} onClick={this.props.removeItemFunc}>delete</a>
+            <a href='#' style={deleteBtnStyle} onClick={this.handleRemoveItem}>delete</a>
        </li>
      )
    }
@@ -210,4 +182,4 @@ class TodoItem extends React.Component {
 
 
 
- export default App
+ export default TodoApp
