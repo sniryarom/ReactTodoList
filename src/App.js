@@ -35,26 +35,29 @@ const deleteBtnStyle = {
  class TodoApp extends React.Component {
   constructor(props){
      super(props);
-     this.state = {text: '', textList: []}
+     let newArray = [];
+      this.props.data.map((item) => (  
+                newArray.push(item.text)
+            ))
 
-     //this.state = {text: ''}
+     this.state = {text: '', textList: newArray}
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
      this.removeItem = this.removeItem.bind(this)
    }
 
-   componentWillMount() {
-      let newArray = this.getInitialData();
-      this.setState({textList: newArray})
-   }
+   // componentWillMount() {
+   //    let newArray = this.getInitialData();
+   //    this.setState({textList: newArray})
+   // }
 
-   getInitialData() {
-      let newArray = [];
-      this.props.data.map((item) => (  
-                newArray.push(item.text)
-            ))
-      return newArray;
-   }
+   // getInitialData() {
+   //    let newArray = [];
+   //    this.props.data.map((item) => (  
+   //              newArray.push(item.text)
+   //          ))
+   //    return newArray;
+   // }
 
    update(e){
       this.setState({text: e.target.value})
