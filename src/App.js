@@ -35,9 +35,9 @@ const deleteBtnStyle = {
  class TodoApp extends React.Component {
   constructor(props){
      super(props);
-     let newArray = [];
+     var newArray = [];
       this.props.data.map((item) => (  
-                newArray.push(item.text)
+                newArray.push({text: item.text})
             ))
 
      this.state = {text: '', textList: newArray}
@@ -131,6 +131,7 @@ removeItem(e, index) {
 
   render(){
     console.log('TodoList render');
+    const numOfItems = this.props.list.length;
     return (
       <div>
         
@@ -141,9 +142,10 @@ removeItem(e, index) {
             ))
         }    
         </ul>
-
+        {numOfItems > 0 && 
+          <span>Number of items:  {numOfItems}</span>
+        }
       </div>
-
     )
   }
 }

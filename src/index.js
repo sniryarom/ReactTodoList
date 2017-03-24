@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import TodoApp from './App';
 
 var data = [
-	{ text: '1' },
-  	{ text: '2' },
-  	{ text: '3' }
+	{ text: 'call Rony' },
+  	{ text: 'get a driving license' },
+  	{ text: 'open a bank account' }
 ];
 
 ReactDOM.render(
