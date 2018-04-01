@@ -1,27 +1,29 @@
-.checkboxHideStyle = {
-  display: 'none'
-};
+.checkboxHideStyle {
+  display: none;
+}
 
-.inputBtnStyle = {
-  marginRight: '20px'
-};
+.inputBtnStyle {
+  margin-right: 20px;
+}
 
-.checkboxShowStyle = {
-  display: 'block'
-};
+.checkboxShowStyle {
+  display: block;
+}
 
-.todoListTypeStyle = {
-  listStyleType: 'none'
-};
+.todoListTypeStyle {
+  list-style-type: none;
+}
 
-.spanTextStrikeThroughStyle = {
-  textDecoration: 'line-through'
-};
+.spanTextStrikeThroughStyle {
+  text-decoration: line-through;
+  margin-left: 10px;
+}
 
-.spanTextRegularStyle = {
-  textDecoration: 'none'
-};
+.spanTextRegularStyle {
+  text-decoration: none;
+  margin-left: 10px;
+}
 
-.deleteBtnStyle = {
-  margin: '30px'
+.deleteBtnStyle {
+  margin: 30px;
 }

@@ -8,7 +8,12 @@ var data = [
   	{ text: 'open a bank account' }
 ];
 
+// ReactDOM.render(
+//   <TodoApp data={data} />,
+//   document.getElementById('root')
+// );
+
 ReactDOM.render(
-  <TodoApp data={data} />,
+  <TodoApp />,
   document.getElementById('root')
 );

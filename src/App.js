@@ -1,63 +1,58 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import styles from './AppStyles.css'; // Tell Webpack that Button.js uses these styles
+import '../styles/AppStyles.css'; 
 
-const checkboxHideStyle = {
-  display: 'none'
-};
 
-const inputBtnStyle = {
-  marginRight: '20px'
-};
-
-const checkboxShowStyle = {
-  display: 'block'
-};
-
-const todoListTypeStyle = {
-  listStyleType: 'none'
-};
-
-const spanTextStrikeThroughStyle = {
-  textDecoration: 'line-through'
-};
-
-const spanTextRegularStyle = {
-  textDecoration: 'none'
-};
-
-const deleteBtnStyle = {
-  margin: '30px'
+function status(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(new Error(response.statusText))
+  }
 }
 
-
+function json(response) {
+  return response.json()
+}
 
  class TodoApp extends React.Component {
   constructor(props){
+    console.debug("constructor started");
      super(props);
      var newArray = [];
-      this.props.data.map((item) => (  
-                newArray.push({text: item.text})
-            ))
 
-     this.state = {text: '', textList: newArray}
+     this.state = {text: '', todoList: newArray, isLoaded: false}
+     this.getInitialData = this.getInitialData.bind(this)
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
      this.removeItem = this.removeItem.bind(this)
+     console.debug("constructor ended");
    }
 
-   // componentWillMount() {
-   //    let newArray = this.getInitialData();
-   //    this.setState({textList: newArray})
-   // }
+   componentWillMount() {
+      console.debug('TodoApp: component will mount');  
+      this.getInitialData();
+   }
 
-   // getInitialData() {
-   //    let newArray = [];
-   //    this.props.data.map((item) => (  
-   //              newArray.push(item.text)
-   //          ))
-   //    return newArray;
-   // }
+   getInitialData() {
+      let newArray = [];
+  
+      fetch('http://localhost:5000/api/todo')
+      .then(status)
+      .then(json)
+      .then((data) => {
+        console.log('Request succeeded with JSON response', data);
+        data.map((item) => (  
+            newArray.push(item)
+        ))
+        console.debug('New array of todo: ', newArray);
+        this.setState({todoList: newArray})
+      }).catch(function(error) {
+        console.log('Request failed', error);
+      });
+
+      return newArray;
+   }
 
    update(e){
       this.setState({text: e.target.value})
@@ -65,9 +60,10 @@ const deleteBtnStyle = {
 
    addItem(){
     if (this.state.text !== '') {
-      let newArray = this.state.textList.slice();    
+      let newArray = this.state.todoList.slice();    
       newArray.push({text: this.state.text});   
-      this.setState({textList: newArray, text: ''})
+      this.setState({todoList: newArray, text: ''})
+      console.debug('New item added: ' + this.state.text + '. Num of items: ' + newArray.length)
     }
     
   }
@@ -79,29 +75,27 @@ const deleteBtnStyle = {
 }
 
 removeItem(e, index) {
-    let array = this.state.textList;
+    let array = this.state.todoList;
     console.log('remove item clicked for index: ' + index)
     array.splice(index, 1);
-    this.setState({textList: array});
+    this.setState({todoList: array});
   }
   
   render(){
      console.log('App render');
      return (
        <div>
-        <input type="text" style={inputBtnStyle} value={this.state.text} onChange={this.update} onKeyPress={this.handleKeyPress} />
+        <input type="text" className='inputBtnStyle' value={this.state.text} onChange={this.update} onKeyPress={this.handleKeyPress} />
         <button onClick={this.addItem} >ADD</button>
           <hr/>
           <div>
             <h1>ToDo List</h1>
-            <TodoList list={this.state.textList} removeItemFunc={this.removeItem} />
+            <TodoList list={this.state.todoList} removeItemFunc={this.removeItem} />
           </div>
        </div>
      )
    }
  } 
-
- 
 
 /**
 *
@@ -110,8 +104,6 @@ removeItem(e, index) {
 
   constructor(props){
     super(props);
-    this.state = {style: spanTextRegularStyle};
-    this.checkItem = this.checkItem.bind(this);
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
   }
 
@@ -119,23 +111,13 @@ removeItem(e, index) {
     this.props.removeItemFunc(e, index);
   }
 
-  checkItem(e){
-      console.log('add item clicked')
-      if (e.target.checked) {
-        this.setState({style: spanTextStrikeThroughStyle})
-      }
-      else {
-       this.setState({style: spanTextRegularStyle}) 
-      }
-   }
-
   render(){
-    console.log('TodoList render');
+    console.log('TodoList will render. List:', this.props.list);
     const numOfItems = this.props.list.length;
     return (
       <div>
         
-        <ul id="todoList" style={todoListTypeStyle}>
+        <ul id="todoList" className='todoListTypeStyle'>
         {
             this.props.list.map((item, index) => (  
                 <TodoItem key={index} index={index} text={item.text} removeItemFunc={this.handleRemoveItem}/>
@@ -154,7 +136,7 @@ removeItem(e, index) {
 class TodoItem extends React.Component {
    constructor(props){
      super(props);
-     this.state = {style: spanTextRegularStyle};
+     this.state = {itemChecked: false};
      this.checkItem = this.checkItem.bind(this);
      this.handleRemoveItem = this.handleRemoveItem.bind(this);
    }
@@ -162,10 +144,10 @@ class TodoItem extends React.Component {
    checkItem(e){
       console.log('add item clicked');
       if (e.target.checked) {
-        this.setState({style: spanTextStrikeThroughStyle});
+        this.setState({itemChecked: true})
       }
       else {
-       this.setState({style: spanTextRegularStyle});
+       this.setState({itemChecked: false})
       }
    }
 
@@ -174,12 +156,14 @@ class TodoItem extends React.Component {
   }
 
    render(){
-    console.log('TodoItem render');
+    console.log('TodoItem will render. Text: ', this.props.text);
+    const itemChecked = this.state.itemChecked;
+    const itemClassName = itemChecked ?  'spanTextStrikeThroughStyle' : 'spanTextRegularStyle'
      return (
        <li>
             <input type="checkbox" onClick={this.checkItem} />
-            <span style={this.state.style}>{this.props.text}</span>
-            <a href='#' style={deleteBtnStyle} onClick={this.handleRemoveItem}>delete</a>
+            <span className={itemClassName}>{this.props.text}</span>
+            <a href='#' className='deleteBtnStyle' onClick={this.handleRemoveItem}>delete</a>
        </li>
      )
    }
