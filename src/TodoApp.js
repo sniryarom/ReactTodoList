@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import TodoList from './TodoList';
 import '../styles/AppStyles.css'; 
 
 
@@ -69,7 +69,7 @@ function json(response) {
   }
 
   handleKeyPress = (event) => {
-  if(event.key == 'Enter'){
+  if(event.key === 'Enter'){
    this.addItem();  
   }
 }
@@ -89,86 +89,11 @@ removeItem(e, index) {
         <button onClick={this.addItem} >ADD</button>
           <hr/>
           <div>
-            <h1>ToDo List</h1>
             <TodoList list={this.state.todoList} removeItemFunc={this.removeItem} />
           </div>
        </div>
      )
    }
  } 
-
-/**
-*
-*/
- class TodoList extends React.Component {
-
-  constructor(props){
-    super(props);
-    this.handleRemoveItem = this.handleRemoveItem.bind(this);
-  }
-
-  handleRemoveItem(e, index) {
-    this.props.removeItemFunc(e, index);
-  }
-
-  render(){
-    console.log('TodoList will render. List:', this.props.list);
-    const numOfItems = this.props.list.length;
-    return (
-      <div>
-        
-        <ul id="todoList" className='todoListTypeStyle'>
-        {
-            this.props.list.map((item, index) => (  
-                <TodoItem key={index} index={index} text={item.text} removeItemFunc={this.handleRemoveItem}/>
-            ))
-        }    
-        </ul>
-        {numOfItems > 0 && 
-          <span>Number of items:  {numOfItems}</span>
-        }
-      </div>
-    )
-  }
-}
-
-
-class TodoItem extends React.Component {
-   constructor(props){
-     super(props);
-     this.state = {itemChecked: false};
-     this.checkItem = this.checkItem.bind(this);
-     this.handleRemoveItem = this.handleRemoveItem.bind(this);
-   }
-
-   checkItem(e){
-      console.log('add item clicked');
-      if (e.target.checked) {
-        this.setState({itemChecked: true})
-      }
-      else {
-       this.setState({itemChecked: false})
-      }
-   }
-
-   handleRemoveItem(e) {
-    this.props.removeItemFunc(e, this.props.index);
-  }
-
-   render(){
-    console.log('TodoItem will render. Text: ', this.props.text);
-    const itemChecked = this.state.itemChecked;
-    const itemClassName = itemChecked ?  'spanTextStrikeThroughStyle' : 'spanTextRegularStyle'
-     return (
-       <li>
-            <input type="checkbox" onClick={this.checkItem} />
-            <span className={itemClassName}>{this.props.text}</span>
-            <a href='#' className='deleteBtnStyle' onClick={this.handleRemoveItem}>delete</a>
-       </li>
-     )
-   }
- }
-
-
 
  export default TodoApp
