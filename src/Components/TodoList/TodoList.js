@@ -1,6 +1,6 @@
 import React from 'react';
-import TodoItem from './TodoItem';
-import '../styles/AppStyles.css'; 
+import TodoItem from '../TodoItem/TodoItem';
+import './TodoList.css'; 
 
 
 /**
@@ -11,10 +11,15 @@ class TodoList extends React.Component {
     constructor(props){
       super(props);
       this.handleRemoveItem = this.handleRemoveItem.bind(this);
+      this.applyFilter = this.applyFilter.bind(this);
     }
   
     handleRemoveItem(e, index) {
       this.props.removeItemFunc(e, index);
+    }
+
+    applyFilter(filter) {
+      this.props.filterFunc(filter);
     }
   
     render(){
@@ -23,9 +28,11 @@ class TodoList extends React.Component {
       return (
         <div>  
           <h1>ToDo List</h1>
-          <a href="#" className="menuLink">All</a>
-          <a href="#" className="menuLink">Open</a>
-          <a href="#" className="menuLink"> Closed</a>
+          <nav>
+            <a href="#" >All</a> | 
+            <a href="#" >Open</a> |
+            <a href="#" onClick={this.applyFilter('Closed')}> Closed</a>
+          </nav>
           <ul id="todoList" className='todoListTypeStyle'>
           {
               this.props.list.map((item, index) => (  

@@ -1,6 +1,6 @@
 import React from 'react';
-import TodoList from './TodoList';
-import '../styles/AppStyles.css'; 
+import TodoList from '../TodoList/TodoList';
+import './TodoApp.css'; 
 
 
 function status(response) {
@@ -26,6 +26,7 @@ function json(response) {
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
      this.removeItem = this.removeItem.bind(this)
+     this.filterList = this.filterList.bind(this)
      console.debug("constructor ended");
    }
 
@@ -80,6 +81,20 @@ removeItem(e, index) {
     array.splice(index, 1);
     this.setState({todoList: array});
   }
+
+  filterList (filter){
+    console.log('filter applied with filter: ' + filter)
+    var filteredArray = this.state.todoList;
+    switch(filter) {
+      case "Closed":
+        filteredArray = this.state.todoList.filter((item) => item.isComplete == true );
+        break;
+        default:
+          break;
+
+    }
+    this.setState({todoList: filteredArray});
+  }
   
   render(){
      console.log('App render');
@@ -89,7 +104,7 @@ removeItem(e, index) {
         <button onClick={this.addItem} >ADD</button>
           <hr/>
           <div>
-            <TodoList list={this.state.todoList} removeItemFunc={this.removeItem} />
+            <TodoList list={this.state.todoList} removeItemFunc={this.removeItem} filterFunc={this.filterList} />
           </div>
        </div>
      )
