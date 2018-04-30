@@ -1,14 +1,14 @@
-.spanTextStrikeThroughStyle {
+.spanTextStrikeThrough{
     text-decoration: line-through;
     margin-left: 10px;
   }
   
-  .spanTextRegularStyle {
+  .spanTextRegular {
     text-decoration: none;
     margin-left: 10px;
   }
 
-  .deleteBtnStyle {
+  .deleteBtn {
     margin: 30px;
   }
   

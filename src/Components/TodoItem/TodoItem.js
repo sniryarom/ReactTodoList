@@ -5,19 +5,13 @@ import './TodoItem.css';
 class TodoItem extends React.Component {
     constructor(props){
       super(props);
-      this.state = {itemChecked: false};
-      this.checkItem = this.checkItem.bind(this);
+      console.log('TodoItem CTR. Text: ', this.props.item.text, ', Completed: ', this.props.item.isComplete); 
+      this.handleCheckItem = this.handleCheckItem.bind(this);
       this.handleRemoveItem = this.handleRemoveItem.bind(this);
     }
  
-    checkItem(e){
-       console.log('add item clicked');
-       if (e.target.checked) {
-         this.setState({itemChecked: true})
-       }
-       else {
-        this.setState({itemChecked: false})
-       }
+    handleCheckItem(e) {
+      this.props.checkItemFunc(e, this.props.index)
     }
  
     handleRemoveItem(e) {
@@ -25,14 +19,13 @@ class TodoItem extends React.Component {
    }
  
     render(){
-     console.log('TodoItem will render. Text: ', this.props.text);
-     const itemChecked = this.state.itemChecked;
-     const itemClassName = itemChecked ?  'spanTextStrikeThroughStyle' : 'spanTextRegularStyle'
+     console.log('TodoItem will render. Text: ', this.props.item.text, ', Completed: ', this.props.item.isComplete);
+     const itemClassName = this.props.item.isComplete ?  'spanTextStrikeThrough' : 'spanTextRegular'
       return (
         <li>
-             <input type="checkbox" onClick={this.checkItem} />
-             <span className={itemClassName}>{this.props.text}</span>
-             <a href='#' className='deleteBtnStyle' onClick={this.handleRemoveItem}>delete</a>
+             <input type="checkbox" onClick={this.handleCheckItem} />
+             <span className={itemClassName}>{this.props.item.text}</span>
+             <a href='#' className='deleteBtn' onClick={this.handleRemoveItem}>delete</a>
         </li>
       )
     }

@@ -21,11 +21,12 @@ function json(response) {
      super(props);
      var newArray = [];
 
-     this.state = {text: '', todoList: newArray, isLoaded: false}
+     this.state = {text: '', todoList: newArray, filteredList: newArray, isLoaded: false}
      this.getInitialData = this.getInitialData.bind(this)
      this.update = this.update.bind(this)
      this.addItem = this.addItem.bind(this)
      this.removeItem = this.removeItem.bind(this)
+     this.checkItem = this.checkItem.bind(this)
      this.filterList = this.filterList.bind(this)
      console.debug("constructor ended");
    }
@@ -47,7 +48,7 @@ function json(response) {
             newArray.push(item)
         ))
         console.debug('New array of todo: ', newArray);
-        this.setState({todoList: newArray})
+        this.setState({todoList: newArray, filteredList: newArray})
       }).catch(function(error) {
         console.log('Request failed', error);
       });
@@ -62,7 +63,7 @@ function json(response) {
    addItem(){
     if (this.state.text !== '') {
       let newArray = this.state.todoList.slice();    
-      newArray.push({text: this.state.text});   
+      newArray.push({text: this.state.text, isComplete: false});   
       this.setState({todoList: newArray, text: ''})
       console.debug('New item added: ' + this.state.text + '. Num of items: ' + newArray.length)
     }
@@ -70,12 +71,19 @@ function json(response) {
   }
 
   handleKeyPress = (event) => {
-  if(event.key === 'Enter'){
-   this.addItem();  
+    if(event.key === 'Enter'){
+    this.addItem();  
+    }
   }
-}
 
-removeItem(e, index) {
+  checkItem(e, index){
+    console.log('check item clicked');
+    let array = this.state.todoList;
+    array[index].isComplete = (e.target.checked) ? true : false;
+    this.setState({todoList: array})
+  }
+
+  removeItem(e, index) {
     let array = this.state.todoList;
     console.log('remove item clicked for index: ' + index)
     array.splice(index, 1);
@@ -87,13 +95,18 @@ removeItem(e, index) {
     var filteredArray = this.state.todoList;
     switch(filter) {
       case "Closed":
-        filteredArray = this.state.todoList.filter((item) => item.isComplete == true );
+        filteredArray = this.state.todoList.filter((item) => item.isComplete === true );
         break;
-        default:
+      case "Open":
+        filteredArray = this.state.todoList.filter((item) => item.isComplete === false );
+        break;
+      case "All":
+      default:
+        filteredArray = this.state.todoList;
           break;
 
     }
-    this.setState({todoList: filteredArray});
+    this.setState({filteredList: filteredArray});
   }
   
   render(){
@@ -104,7 +117,7 @@ removeItem(e, index) {
         <button onClick={this.addItem} >ADD</button>
           <hr/>
           <div>
-            <TodoList list={this.state.todoList} removeItemFunc={this.removeItem} filterFunc={this.filterList} />
+            <TodoList list={this.state.filteredList} checkItemFunc={this.checkItem} removeItemFunc={this.removeItem} filterFunc={this.filterList} />
           </div>
        </div>
      )

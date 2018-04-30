@@ -11,11 +11,16 @@ class TodoList extends React.Component {
     constructor(props){
       super(props);
       this.handleRemoveItem = this.handleRemoveItem.bind(this);
+      this.handleCheckItem = this.handleCheckItem.bind(this);
       this.applyFilter = this.applyFilter.bind(this);
     }
   
     handleRemoveItem(e, index) {
       this.props.removeItemFunc(e, index);
+    }
+
+    handleCheckItem(e, index) {
+      this.props.checkItemFunc(e, index)
     }
 
     applyFilter(filter) {
@@ -29,14 +34,14 @@ class TodoList extends React.Component {
         <div>  
           <h1>ToDo List</h1>
           <nav>
-            <a href="#" >All</a> | 
-            <a href="#" >Open</a> |
-            <a href="#" onClick={this.applyFilter('Closed')}> Closed</a>
+            <a href="#" onClick={() => { this.applyFilter('All') }}>All</a> | 
+            <a href="#" onClick={() => { this.applyFilter('Open') }} >Open</a> |
+            <a href="#" onClick={() => { this.applyFilter('Closed') }}>Closed</a>
           </nav>
           <ul id="todoList" className='todoListTypeStyle'>
           {
               this.props.list.map((item, index) => (  
-                  <TodoItem key={index} index={index} text={item.text} removeItemFunc={this.handleRemoveItem}/>
+                  <TodoItem key={index} index={index} item={item} checkItemFunc={this.handleCheckItem} removeItemFunc={this.handleRemoveItem}/>
               ))
           }    
           </ul>
