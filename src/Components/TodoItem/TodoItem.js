@@ -20,10 +20,11 @@ class TodoItem extends React.Component {
  
     render(){
      console.log('TodoItem will render. Text: ', this.props.item.text, ', Completed: ', this.props.item.isComplete);
-     const itemClassName = this.props.item.isComplete ?  'spanTextStrikeThrough' : 'spanTextRegular'
+     const itemChecked = this.props.item.isComplete ?  true : false;
+     const itemClassName = this.props.item.isComplete ?  'spanTextStrikeThrough' : 'spanTextRegular';
       return (
         <li>
-             <input type="checkbox" onClick={this.handleCheckItem} />
+             <input type="checkbox" checked={itemChecked} onClick={this.handleCheckItem} />
              <span className={itemClassName}>{this.props.item.text}</span>
              <a href='#' className='deleteBtn' onClick={this.handleRemoveItem}>delete</a>
         </li>
