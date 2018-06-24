@@ -2,6 +2,7 @@ import React from 'react';
 import TodoList from '../TodoList/TodoList';
 import './TodoApp.css'; 
 
+const API_URL = 'http://localhost:5000/api/todo';
 
 function status(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -39,7 +40,7 @@ function json(response) {
    getInitialData() {
       let newArray = [];
   
-      fetch('http://localhost:5000/api/todo')
+      fetch(API_URL)
       .then(status)
       .then(json)
       .then((data) => {
@@ -52,8 +53,6 @@ function json(response) {
       }).catch(function(error) {
         console.log('Request failed', error);
       });
-
-      return newArray;
    }
 
    update(e){
@@ -62,10 +61,34 @@ function json(response) {
 
    addItem(){
     if (this.state.text !== '') {
-      let newArray = this.state.todoList.slice();    
-      newArray.push({text: this.state.text, isComplete: false});   
-      this.setState({todoList: newArray, text: ''})
-      console.debug('New item added: ' + this.state.text + '. Num of items: ' + newArray.length)
+      //update the UI
+      let newArray = this.state.todoList.slice();
+      let newTodoItem = {text: this.state.text, isComplete: false};  
+      newArray.push(newTodoItem);   
+      this.setState({todoList: newArray, text: ''});
+      //then update the server and then the client
+      newArray = [];
+      fetch(API_URL, {
+        method: 'post',
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(newTodoItem)
+      })
+      .then(status)
+      .then(json)
+      .then((data) => {
+        console.log('Request succeeded with JSON response', data);
+        data.map((item) => (  
+            newArray.push(item)
+        ))
+        console.debug('New array of todo: ', newArray);
+        this.setState({todoList: newArray, filteredList: newArray});
+        console.debug('New item added: ' + this.state.text + '. Num of items: ' + newArray.length)
+      }).catch(function(error) {
+        console.log('Request failed', error);
+      });
     }
     
   }
@@ -78,17 +101,66 @@ function json(response) {
 
   checkItem(e, index){
     console.log('check item clicked');
-    let array = this.state.todoList;
-    array[index].isComplete = (e.target.checked) ? true : false;
-    this.setState({todoList: array})
+    //update the UI first
+    const key = this.state.todoList[index].key;
+    let newArray = this.state.todoList;
+    var todoItem = newArray[index];
+    todoItem.isComplete = (e.target.checked) ? true : false;
+    newArray[index] = todoItem;
+    this.setState({todoList: newArray, filteredList: newArray})
+    //then update the server and update the client again
+    newArray = [];
+    fetch(API_URL + '/' + key, {
+      method: 'put',
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(todoItem)
+    })
+    .then(status)
+    .then(json)
+    .then((data) => {
+      console.log('Request succeeded with JSON response', data);
+      data.map((item) => (  
+          newArray.push(item)
+      ))
+      console.debug('New array of todo: ', newArray);
+      this.setState({todoList: newArray, filteredList: newArray});
+      console.debug('Item checked: key=' + key);
+    }).catch(function(error) {
+      console.log('Request failed', error);
+    });
   }
 
   removeItem(e, index) {
-    let array = this.state.todoList;
-    console.log('remove item clicked for index: ' + index)
-    array.splice(index, 1);
-    this.setState({todoList: array});
+    const key = this.state.todoList[index].key;
+    let newArray = [];
+    fetch(API_URL + '/' + key, {
+      method: 'delete'
+    })
+    .then(status)
+    .then(json)
+    .then((data) => {
+      console.log('Request succeeded with JSON response', data);
+      data.map((item) => (  
+          newArray.push(item)
+      ))
+      console.debug('New array of todo: ', newArray);
+      this.setState({todoList: newArray, filteredList: newArray});
+      console.debug('Item removed: key=' + key + '. Num of items: ' + newArray.length)
+    }).catch(function(error) {
+      console.log('Request failed', error);
+    });
+     
   }
+
+  // checkItem(e, index){
+  //   console.log('check item clicked');
+  //   let array = this.state.todoList;
+  //   array[index].isComplete = (e.target.checked) ? true : false;
+  //   this.setState({todoList: array})
+  // }
 
   filterList (filter){
     console.log('filter applied with filter: ' + filter)
